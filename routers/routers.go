@@ -2,18 +2,36 @@ package routers
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"net/http"
 	"simple-rest/logging"
+	"simple-rest/metric"
+	"simple-rest/middleware"
 	"simple-rest/model"
 )
 
 const RecordsUrl = "/records"
 const RecordUrl = "/records/:record"
 
+func prometheusHandler() gin.HandlerFunc {
+	h := promhttp.Handler()
+	return func(c *gin.Context) {
+		h.ServeHTTP(c.Writer, c.Request)
+	}
+}
+
 func Setup(logger *logging.Logger) *gin.Engine {
 	r := gin.New()
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
+
+	metricServer, err := metric.NewPrometheusService()
+	if err != nil {
+		logger.Fatalf("routers.Setup error: %v", err)
+	}
+	r.Use(middleware.Metric(metricServer))
+
+	r.GET("/metrics", prometheusHandler())
 
 	r.GET(RecordsUrl, func(ctx *gin.Context) {
 		records, err := model.SelectAll()

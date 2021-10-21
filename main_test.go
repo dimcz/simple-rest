@@ -266,4 +266,7 @@ func TestCRUD(t *testing.T) {
 	err = json.Unmarshal(respBody, &respRecord)
 	require.NoError(t, err)
 	require.Equal(t, respRecord.Name, record.Name)
+
+	//DELETE
+
 }

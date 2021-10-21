@@ -3,7 +3,7 @@ bind_ip: localhost
 http_port: 8080
 postgres:
   host: localhost
-  username: user
-  password: pass
-  dbname: user
+  username: postgres
+  password: 1234567890
+  dbname: postgres
   port: 5432
