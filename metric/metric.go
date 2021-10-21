@@ -25,7 +25,3 @@ func (h HTTP) Started() {
 func (h HTTP) Finished() {
 	h.FinishedAt = time.Now()
 }
-
-type UseCase interface {
-	SaveHTTP(h *HTTP)
-}

@@ -5,7 +5,7 @@ import (
 	"simple-rest/metric"
 )
 
-func Metric(mService metric.UseCase) gin.HandlerFunc {
+func Metric(s *metric.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		m := metric.NewHTTP(c.Request.URL.Path, c.Request.Method)
 		m.Started()
@@ -13,6 +13,6 @@ func Metric(mService metric.UseCase) gin.HandlerFunc {
 		m.Finished()
 		c.Next()
 		m.StatusCode = c.Writer.Status()
-		mService.SaveHTTP(m)
+		s.SaveHTTP(m)
 	}
 }
