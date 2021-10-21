@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"net"
 	"net/http"
 	"simple-rest/logging"
@@ -23,10 +22,9 @@ func main() {
 
 	logger.Info("reading settings")
 	settings.Setup(*filename, logger)
+
 	logger.Info("open connection to DB")
 	model.Setup(*migration, logger)
-
-	gin.SetMode(settings.AppSettings.ServerMode)
 
 	maxHeaderBytes := 1 << 20
 

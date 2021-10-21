@@ -8,6 +8,7 @@ import (
 	"simple-rest/metric"
 	"simple-rest/middleware"
 	"simple-rest/model"
+	"simple-rest/settings"
 )
 
 const RecordsUrl = "/records"
@@ -22,6 +23,9 @@ func prometheusHandler() gin.HandlerFunc {
 
 func Setup(logger *logging.Logger) *gin.Engine {
 	r := gin.New()
+
+	gin.SetMode(settings.AppSettings.ServerMode)
+
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
 
@@ -30,7 +34,6 @@ func Setup(logger *logging.Logger) *gin.Engine {
 		logger.Fatalf("routers.Setup error: %v", err)
 	}
 	r.Use(middleware.Metric(metricServer))
-
 	r.GET("/metrics", prometheusHandler())
 
 	r.GET(RecordsUrl, func(ctx *gin.Context) {
