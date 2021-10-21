@@ -18,11 +18,11 @@ func NewHTTP(handler string, method string) *HTTP {
 	}
 }
 
-func (h HTTP) Started() {
+func (h *HTTP) Started() {
 	h.StartedAt = time.Now()
 }
 
-func (h HTTP) Finished() {
+func (h *HTTP) Finished() {
 	h.FinishedAt = time.Now()
 	h.Duration = time.Since(h.StartedAt).Seconds()
 }
