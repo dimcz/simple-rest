@@ -47,10 +47,7 @@ func (client *httpClient) sendJsonReq(method, url string, reqBody []byte) (res *
 		return nil, nil, err
 	}
 	defer func(Body io.ReadCloser) {
-		err := Body.Close()
-		if err != nil {
-			//
-		}
+		_ = Body.Close()
 	}(resp.Body)
 
 	resBody, err = ioutil.ReadAll(resp.Body)
@@ -255,7 +252,7 @@ func TestCRUD(t *testing.T) {
 	record.Name = "John"
 	httpBody, err = json.Marshal(record)
 	require.NoError(t, err)
-	resp, respBody, err = client.sendJsonReq("PUT", "http://localhost:8080/records/"+strconv.Itoa(record.ID), httpBody)
+	resp, _, err = client.sendJsonReq("PUT", "http://localhost:8080/records/"+strconv.Itoa(record.ID), httpBody)
 	require.NoError(t, err)
 	require.Equal(t, http.StatusNoContent, resp.StatusCode)
 	resp, respBody, err = client.sendJsonReq("GET", "http://localhost:8080/records/"+strconv.Itoa(record.ID), []byte{})
