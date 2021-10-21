@@ -26,14 +26,13 @@ func main() {
 	logger.Info("open connection to DB")
 	model.Setup(*migration, logger)
 
-	maxHeaderBytes := 1 << 20
-
 	listener, err := net.Listen("tcp", fmt.Sprintf("%s:%d",
 		settings.AppSettings.BindIP, settings.AppSettings.HTTPPort))
 	if err != nil {
 		logger.Fatal(err)
 	}
 
+	maxHeaderBytes := 1 << 20
 	server := &http.Server{
 		Handler:        routers.Setup(logger),
 		ReadTimeout:    time.Second * 60,
