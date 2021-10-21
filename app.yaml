@@ -1,0 +1,9 @@
+server_mode: debug
+bind_ip: localhost
+http_port: 8080
+postgres:
+  host: localhost
+  username: user
+  password: pass
+  dbname: user
+  port: 5432
