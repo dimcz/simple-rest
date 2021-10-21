@@ -2,11 +2,9 @@ package model
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"log"
-	"net/http"
+	"simple-rest/logging"
 	"simple-rest/settings"
 )
 
@@ -17,8 +15,10 @@ type Records struct {
 }
 
 var db *gorm.DB
+var logger *logging.Logger
 
-func Setup(migration bool) {
+func Setup(migration bool, l *logging.Logger) {
+	logger = l
 	var err error
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
 		settings.AppSettings.Postgres.Host,
@@ -28,82 +28,57 @@ func Setup(migration bool) {
 		settings.AppSettings.Postgres.Port)
 	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
-		log.Fatalf("model.Setup error: %v", err)
+		logger.Fatalf("model.Setup error: %v", err)
 	}
 
 	if migration {
 		if err = db.AutoMigrate(new(Records)); err != nil {
-			log.Fatalf("model.AutoMigrate error: %v", err)
+			logger.Fatalf("model.AutoMigrate error: %v", err)
 		}
 	}
 }
 
-func SelectAll(c *gin.Context) {
-	var records []Records
-	err := db.Find(&records).Error
-	if err == gorm.ErrRecordNotFound {
-		c.Writer.WriteHeader(http.StatusNotFound)
-		return
-	} else if err != nil {
-		c.Writer.WriteHeader(http.StatusInternalServerError)
-		return
+func SelectAll() (records []Records, err error) {
+	err = db.Find(&records).Error
+	if err != nil {
+		logger.Error(err)
+		return nil, err
 	}
-
-	c.JSON(http.StatusOK, records)
+	return records, nil
 }
 
-func SelectRecordByID(c *gin.Context) {
-	id := c.Param("record")
+func SelectRecordByID(id interface{}) (*Records, error) {
 	var record Records
-
 	err := db.Find(&record).Where("id = ?", id).Error
-	if err == gorm.ErrRecordNotFound {
-		c.Writer.WriteHeader(http.StatusNotFound)
-		return
-	} else if err != nil {
-		c.Writer.WriteHeader(http.StatusInternalServerError)
-		return
+	if err != nil {
+		logger.Error(err)
+		return nil, err
 	}
 
-	c.JSON(http.StatusOK, record)
+	return &record, nil
 }
 
-func CreateUser(c *gin.Context) {
-	var record Records
-	if err := c.BindJSON(&record); err != nil {
-		c.Writer.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
+func CreateUser(record Records) (id int, err error) {
 	if err := db.Create(&record).Error; err != nil {
-		c.Writer.WriteHeader(http.StatusInternalServerError)
+		logger.Error(err)
+		return 0, err
 	} else {
-		c.JSON(http.StatusOK, record)
+		return record.ID, nil
 	}
 }
 
-func DeleteUser(c *gin.Context) {
-	id := c.Param("record")
-	if err := db.Where("id = ?", id).Delete(&Records{}).Error; err != nil {
-		c.Writer.WriteHeader(http.StatusInternalServerError)
-	} else {
-		c.Writer.WriteHeader(http.StatusNoContent)
+func DeleteUser(id interface{}) error {
+	err := db.Where("id = ?", id).Delete(&Records{}).Error
+	if err != nil {
+		logger.Error(err)
 	}
-
+	return err
 }
 
-func UpdateUser(c *gin.Context) {
-	id := c.Param("record")
-
-	var record Records
-	if err := c.BindJSON(&record); err != nil {
-		c.Writer.WriteHeader(http.StatusInternalServerError)
-		return
+func UpdateUser(id interface{}, record Records) error {
+	err := db.Model(&Records{}).Where("id = ?", id).Updates(record).Error
+	if err != nil {
+		logger.Error(err)
 	}
-
-	if err := db.Model(&Records{}).Where("id = ?", id).Updates(record).Error; err != nil {
-		c.Writer.WriteHeader(http.StatusInternalServerError)
-	} else {
-		c.Writer.WriteHeader(http.StatusNoContent)
-	}
+	return err
 }

@@ -223,6 +223,10 @@ func TestCRUD(t *testing.T) {
 	}
 	client := httpClient{}
 
+	respID := struct {
+		ID int
+	}{}
+
 	//CREATE
 	record := PhoneRecord{
 		Name:  "Alice",
@@ -233,23 +237,24 @@ func TestCRUD(t *testing.T) {
 	resp, respBody, err := client.sendJsonReq("POST", "http://localhost:8080/records", httpBody)
 	require.NoError(t, err)
 	require.Equal(t, http.StatusOK, resp.StatusCode)
-	respRecord := PhoneRecord{}
-	err = json.Unmarshal(respBody, &respRecord)
+	err = json.Unmarshal(respBody, &respID)
 	require.NoError(t, err)
-	require.NotEqual(t, 0, respRecord.ID)
+	require.NotEqual(t, 0, respID.ID)
 
 	//READ
-	resp, respBody, err = client.sendJsonReq("GET", "http://localhost:8080/records/"+strconv.Itoa(respRecord.ID), []byte{})
+	respRecord := PhoneRecord{}
+	resp, respBody, err = client.sendJsonReq("GET", "http://localhost:8080/records/"+strconv.Itoa(respID.ID), []byte{})
 	require.NoError(t, err)
 	require.Equal(t, http.StatusOK, resp.StatusCode)
-	err = json.Unmarshal(respBody, &record)
+	err = json.Unmarshal(respBody, &respRecord)
 	require.NoError(t, err)
-	require.Equal(t, respRecord.ID, record.ID)
+	require.Equal(t, respRecord.ID, respID.ID)
 	require.Equal(t, respRecord.Name, record.Name)
 	require.Equal(t, respRecord.Phone, record.Phone)
 
 	//UPDATE
 	record.Name = "John"
+	record.ID = respID.ID
 	httpBody, err = json.Marshal(record)
 	require.NoError(t, err)
 	resp, _, err = client.sendJsonReq("PUT", "http://localhost:8080/records/"+strconv.Itoa(record.ID), httpBody)

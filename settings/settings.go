@@ -2,7 +2,7 @@ package settings
 
 import (
 	"github.com/ilyakaznacheev/cleanenv"
-	"log"
+	"simple-rest/logging"
 )
 
 type Settings struct {
@@ -20,8 +20,8 @@ type Settings struct {
 
 var AppSettings = &Settings{}
 
-func Setup(filename string) {
+func Setup(filename string, logger *logging.Logger) {
 	if err := cleanenv.ReadConfig(filename, AppSettings); err != nil {
-		log.Fatalf("settings.Setup error: %s", err)
+		logger.Fatalf("settings.Setup error: %s", err)
 	}
 }

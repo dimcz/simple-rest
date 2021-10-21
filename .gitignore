@@ -4,6 +4,8 @@
 *.dll
 *.so
 *.dylib
+*.log
+*.http
 
 simple-rest
 .idea

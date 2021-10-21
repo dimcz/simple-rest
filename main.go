@@ -4,9 +4,9 @@ import (
 	"flag"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"log"
 	"net"
 	"net/http"
+	"simple-rest/logging"
 	"simple-rest/model"
 	"simple-rest/routers"
 	"simple-rest/settings"
@@ -14,12 +14,17 @@ import (
 )
 
 func main() {
+
+	logger := logging.GetLogger()
+
 	filename := flag.String("c", "app.yaml", "use an alternative configuration file")
 	migration := flag.Bool("s", true, "skip database migration")
 	flag.Parse()
 
-	settings.Setup(*filename)
-	model.Setup(*migration)
+	logger.Info("reading settings")
+	settings.Setup(*filename, logger)
+	logger.Info("open connection to DB")
+	model.Setup(*migration, logger)
 
 	gin.SetMode(settings.AppSettings.ServerMode)
 
@@ -28,15 +33,15 @@ func main() {
 	listener, err := net.Listen("tcp", fmt.Sprintf("%s:%d",
 		settings.AppSettings.BindIP, settings.AppSettings.HTTPPort))
 	if err != nil {
-		log.Fatalf("main.Listen error: %v", err)
+		logger.Fatal(err)
 	}
 
 	server := &http.Server{
-		Handler:        routers.Setup(),
+		Handler:        routers.Setup(logger),
 		ReadTimeout:    time.Second * 60,
 		WriteTimeout:   time.Second * 60,
 		MaxHeaderBytes: maxHeaderBytes,
 	}
-	log.Printf("[info] start http server listening %s:%d", settings.AppSettings.BindIP, settings.AppSettings.HTTPPort)
-	log.Fatal(server.Serve(listener))
+	logger.Infof("[info] start http server listening %s:%d", settings.AppSettings.BindIP, settings.AppSettings.HTTPPort)
+	logger.Fatal(server.Serve(listener))
 }
