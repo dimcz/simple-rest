@@ -11,7 +11,6 @@ func Metric(s *metric.Service) gin.HandlerFunc {
 		m.Started()
 		c.Next()
 		m.Finished()
-		c.Next()
 		m.StatusCode = c.Writer.Status()
 		s.SaveHTTP(m)
 	}
