@@ -244,10 +244,24 @@ func TestCRUD(t *testing.T) {
 	//READ
 	resp, respBody, err = client.sendJsonReq("GET", "http://localhost:8080/records/"+strconv.Itoa(respRecord.ID), []byte{})
 	require.NoError(t, err)
-	require.Equal(t, 200, resp.StatusCode)
+	require.Equal(t, http.StatusOK, resp.StatusCode)
 	err = json.Unmarshal(respBody, &record)
 	require.NoError(t, err)
 	require.Equal(t, respRecord.ID, record.ID)
 	require.Equal(t, respRecord.Name, record.Name)
 	require.Equal(t, respRecord.Phone, record.Phone)
+
+	//UPDATE
+	record.Name = "John"
+	httpBody, err = json.Marshal(record)
+	require.NoError(t, err)
+	resp, respBody, err = client.sendJsonReq("PUT", "http://localhost:8080/records/"+strconv.Itoa(record.ID), httpBody)
+	require.NoError(t, err)
+	require.Equal(t, http.StatusNoContent, resp.StatusCode)
+	resp, respBody, err = client.sendJsonReq("GET", "http://localhost:8080/records/"+strconv.Itoa(record.ID), []byte{})
+	require.NoError(t, err)
+	require.Equal(t, http.StatusOK, resp.StatusCode)
+	err = json.Unmarshal(respBody, &respRecord)
+	require.NoError(t, err)
+	require.Equal(t, respRecord.Name, record.Name)
 }
