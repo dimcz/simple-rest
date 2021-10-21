@@ -24,4 +24,5 @@ func (h HTTP) Started() {
 
 func (h HTTP) Finished() {
 	h.FinishedAt = time.Now()
+	h.Duration = time.Since(h.StartedAt).Seconds()
 }
