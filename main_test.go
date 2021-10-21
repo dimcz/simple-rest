@@ -175,7 +175,7 @@ func TestMain(m *testing.M) {
 	confPath, stopDB := startPostgreSQL()
 	log.Infoln("[TestMain] PostgreSQL started!")
 
-	cmd := exec.Command("./rest-api", "-c", confPath)
+	cmd := exec.Command("./simple-rest", "-c", confPath)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	err := cmd.Start()
