@@ -1,17 +1,17 @@
-package metric
+package prometheus
 
 import "time"
 
 type HTTP struct {
 	Handler    string
 	Method     string
-	StatusCode int
+	StatusCode string
 	StartedAt  time.Time
 	FinishedAt time.Time
 	Duration   float64
 }
 
-func NewHTTP(handler string, method string) *HTTP {
+func NewHTTP(handler, method string) *HTTP {
 	return &HTTP{
 		Handler: handler,
 		Method:  method,

@@ -5,40 +5,37 @@ import (
 	"fmt"
 	"net"
 	"net/http"
-	"simple-rest/logging"
-	"simple-rest/model"
+	"simple-rest/data"
+	"simple-rest/pkg/util"
 	"simple-rest/routers"
-	"simple-rest/settings"
 	"time"
 )
 
 func main() {
-
-	logger := logging.GetLogger()
-
 	filename := flag.String("c", "app.yaml", "use an alternative configuration file")
-	migration := flag.Bool("s", true, "skip database migration")
 	flag.Parse()
 
+	logger := util.GetLogger()
 	logger.Info("reading settings")
-	settings.Setup(*filename, logger)
+	config := util.GetConfig(*filename, logger)
 
 	logger.Info("open connection to DB")
-	model.Setup(*migration, logger)
+	data.NewConnection(config, logger)
+	util.Setup(config)
 
 	listener, err := net.Listen("tcp", fmt.Sprintf("%s:%d",
-		settings.AppSettings.BindIP, settings.AppSettings.HTTPPort))
+		config.BindIP, config.HTTPPort))
 	if err != nil {
 		logger.Fatal(err)
 	}
 
 	maxHeaderBytes := 1 << 20
 	server := &http.Server{
-		Handler:        routers.Setup(logger),
+		Handler:        routers.InitRouters(logger),
 		ReadTimeout:    time.Second * 60,
 		WriteTimeout:   time.Second * 60,
 		MaxHeaderBytes: maxHeaderBytes,
 	}
-	logger.Infof("[info] start http server listening %s:%d", settings.AppSettings.BindIP, settings.AppSettings.HTTPPort)
+	logger.Infof("[info] start http server listening %s:%d", config.BindIP, config.HTTPPort)
 	logger.Fatal(server.Serve(listener))
 }

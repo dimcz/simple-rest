@@ -1,19 +1,17 @@
-package metric
+package prometheus
 
 import (
 	"github.com/prometheus/client_golang/prometheus"
-	"strconv"
 )
 
 type Service struct {
 	httpRequestHistogram *prometheus.HistogramVec
 }
 
-func NewPrometheusService() (*Service, error) {
+func NewPrometheus() (*Service, error) {
 	http := prometheus.NewHistogramVec(prometheus.HistogramOpts{
 		Namespace: "http",
-		Name:      "requests_duration_seconds",
-		Help:      "The latency of HTTP requests",
+		Name:      "request_duration_seconds",
 		Buckets:   prometheus.DefBuckets,
 	}, []string{"handler", "method", "code"})
 
@@ -28,5 +26,5 @@ func NewPrometheusService() (*Service, error) {
 }
 
 func (s *Service) SaveHTTP(h *HTTP) {
-	s.httpRequestHistogram.WithLabelValues(h.Handler, h.Method, strconv.Itoa(h.StatusCode)).Observe(h.Duration)
+	s.httpRequestHistogram.WithLabelValues(h.Handler, h.Method, h.StatusCode).Observe(h.Duration)
 }

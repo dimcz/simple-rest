@@ -1,4 +1,4 @@
-package logging
+package util
 
 import (
 	"fmt"
@@ -9,11 +9,11 @@ import (
 	"runtime"
 )
 
-var e *logrus.Entry
-
 type Logger struct {
 	*logrus.Entry
 }
+
+var e *logrus.Entry
 
 func GetLogger() *Logger {
 	return &Logger{e}

@@ -1,6 +1,7 @@
 server_mode: debug
 bind_ip: localhost
 http_port: 8080
+SigningKey: 1234567890
 postgres:
   host: localhost
   username: postgres
