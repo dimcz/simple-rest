@@ -1,12 +1,13 @@
 package routers
 
 import (
-	"github.com/gin-gonic/gin"
 	"simple-rest/middleware/jwt"
 	"simple-rest/middleware/metric"
 	"simple-rest/pkg/prometheus"
 	"simple-rest/pkg/util"
 	v1 "simple-rest/routers/v1"
+
+	"github.com/gin-gonic/gin"
 )
 
 func InitRouters(logger *util.Logger) *gin.Engine {

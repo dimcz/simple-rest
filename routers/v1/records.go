@@ -1,11 +1,12 @@
 package v1
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"simple-rest/pkg/app"
 	"simple-rest/pkg/message"
 	"simple-rest/service/records_service"
+
+	"github.com/gin-gonic/gin"
 )
 
 func GetRecords(c *gin.Context) {

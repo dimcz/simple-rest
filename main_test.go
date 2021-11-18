@@ -4,11 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/ory/dockertest/v3"
-	log "github.com/sirupsen/logrus"
-	"github.com/stretchr/testify/require"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
 	"io"
 	"io/ioutil"
 	"net"
@@ -20,6 +15,12 @@ import (
 	"testing"
 	"text/template"
 	"time"
+
+	"github.com/ory/dockertest/v3"
+	log "github.com/sirupsen/logrus"
+	"github.com/stretchr/testify/require"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 type DSN struct {
@@ -227,7 +228,7 @@ func TestCRUD(t *testing.T) {
 		ID int
 	}{}
 
-	//CREATE
+	// CREATE
 	record := PhoneRecord{
 		Name:  "Alice",
 		Phone: "123",
@@ -241,7 +242,7 @@ func TestCRUD(t *testing.T) {
 	require.NoError(t, err)
 	require.NotEqual(t, 0, respID.ID)
 
-	//READ
+	// READ
 	respRecord := PhoneRecord{}
 	resp, respBody, err = client.sendJsonReq("GET", "http://localhost:8080/records/"+strconv.Itoa(respID.ID), []byte{})
 	require.NoError(t, err)
@@ -252,7 +253,7 @@ func TestCRUD(t *testing.T) {
 	require.Equal(t, respRecord.Name, record.Name)
 	require.Equal(t, respRecord.Phone, record.Phone)
 
-	//UPDATE
+	// UPDATE
 	record.Name = "John"
 	record.ID = respID.ID
 	httpBody, err = json.Marshal(record)
@@ -267,6 +268,6 @@ func TestCRUD(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, respRecord.Name, record.Name)
 
-	//DELETE
+	// DELETE
 
 }

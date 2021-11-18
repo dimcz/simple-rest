@@ -1,8 +1,9 @@
 package app
 
 import (
-	"github.com/gin-gonic/gin"
 	"simple-rest/pkg/message"
+
+	"github.com/gin-gonic/gin"
 )
 
 type Gin struct {

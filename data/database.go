@@ -2,9 +2,10 @@ package data
 
 import (
 	"fmt"
+	"simple-rest/pkg/util"
+
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"simple-rest/pkg/util"
 )
 
 var db *gorm.DB

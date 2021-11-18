@@ -1,10 +1,11 @@
 package metric
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"simple-rest/pkg/prometheus"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func Prometheus(s *prometheus.Service) gin.HandlerFunc {

@@ -1,13 +1,14 @@
 package routers
 
 import (
-	"github.com/astaxie/beego/validation"
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"simple-rest/pkg/app"
 	"simple-rest/pkg/message"
 	"simple-rest/pkg/util"
 	"simple-rest/service/auth_service"
+
+	"github.com/astaxie/beego/validation"
+	"github.com/gin-gonic/gin"
 )
 
 type auth struct {

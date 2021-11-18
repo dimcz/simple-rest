@@ -2,11 +2,12 @@ package util
 
 import (
 	"fmt"
-	"github.com/sirupsen/logrus"
 	"log"
 	"os"
 	"path"
 	"runtime"
+
+	"github.com/sirupsen/logrus"
 )
 
 type Logger struct {
@@ -31,11 +32,11 @@ func init() {
 		FullTimestamp: true,
 	}
 
-	if err := os.MkdirAll("logs", os.FileMode(0700)); err != nil {
+	if err := os.MkdirAll("logs", os.FileMode(0o700)); err != nil {
 		log.Fatalf("logging.Setup(Mkdir) error: %v", err)
 	}
 
-	logFile, err := os.OpenFile("logs/all.log", os.O_WRONLY|os.O_APPEND|os.O_CREATE, os.FileMode(0600))
+	logFile, err := os.OpenFile("logs/all.log", os.O_WRONLY|os.O_APPEND|os.O_CREATE, os.FileMode(0o600))
 	if err != nil {
 		log.Fatalf("logging.Setup(OpenFile) error: %v", err)
 	}
