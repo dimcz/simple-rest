@@ -42,7 +42,6 @@ func (client *httpClient) sendJsonReq(method, url string, reqBody []byte) (res *
 	}
 
 	req.Header.Set("Content-type", "application/json")
-
 	resp, err := client.parent.Do(req)
 	if err != nil {
 		return nil, nil, err
